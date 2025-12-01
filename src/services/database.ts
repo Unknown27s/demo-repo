@@ -2,6 +2,15 @@ import { openDB } from 'idb';
 import type { DBSchema, IDBPDatabase } from 'idb';
 import type { Message, UserProgress, VocabularyWord, AppSettings, ConversationMode } from '../types';
 
+// Database entity types with id field
+interface UserProgressEntity extends UserProgress {
+  id: string;
+}
+
+interface AppSettingsEntity extends AppSettings {
+  id: string;
+}
+
 interface SpeakEngDB extends DBSchema {
   messages: {
     key: string;
@@ -15,11 +24,11 @@ interface SpeakEngDB extends DBSchema {
   };
   progress: {
     key: string;
-    value: UserProgress;
+    value: UserProgressEntity;
   };
   settings: {
     key: string;
-    value: AppSettings;
+    value: AppSettingsEntity;
   };
 }
 
@@ -117,7 +126,8 @@ export async function updateProgress(progress: Partial<UserProgress>): Promise<U
   const db = await getDB();
   const current = await getProgress();
   const updated = { ...current, ...progress };
-  await db.put('progress', { ...updated, id: 'user-progress' } as UserProgress & { id: string });
+  const entity: UserProgressEntity = { ...updated, id: 'user-progress' };
+  await db.put('progress', entity);
   return updated;
 }
 
@@ -187,6 +197,7 @@ export async function updateSettings(settings: Partial<AppSettings>): Promise<Ap
   const db = await getDB();
   const current = await getSettings();
   const updated = { ...current, ...settings };
-  await db.put('settings', { ...updated, id: 'user-settings' } as AppSettings & { id: string });
+  const entity: AppSettingsEntity = { ...updated, id: 'user-settings' };
+  await db.put('settings', entity);
   return updated;
 }
