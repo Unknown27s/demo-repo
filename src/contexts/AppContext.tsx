@@ -204,8 +204,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Update progress
-
-  // Update progress
   const updateProgress = useCallback(async () => {
     const updatedProgress = await db.getProgress();
     setProgress(updatedProgress);
